@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">  
+<HTML>  
+<HEAD>  
+<TITLE>Javascript regex test page</TITLE>  
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=GB2312">  
+<SCRIPT>  
+if (! document.all){    //兼容Mozilla的innerText  
+    HTMLElement.prototype.__defineSetter__("innerText", function (sText) {  
+       this.innerHTML = sText.replace(/\&/g, "&")  
+                             .replace(/>/g, ">")  
+                             .replace(/</g, "<")  
+                             .replace(/ /g, " ")  
+                             .replace(/\n/g,"<BR/>");  
+    });  
+}  
+  
+/**  
+* Method 测试正则表达式函数  
+* @param method 接收到的正则表达式类的方法  
+*/  
+function check(method)  
+{  
+// 将用户输入的正则表达式的标志转换为小写  
+document.getElementById("flags").value = document.getElementById("flags").value.toLowerCase();  
+  
+// 如果含有不是g、i、m的字符, 则 提示并返回  
+if ( document.getElementById("flags").value.search(/[^g|i|m]/g) != -1 )  
+{  
+alert("flags only can be g, i, m");  
+return;  
+}  
+  
+// 利用用户输入的字符串和标志建立正则表达式  
+var re = new RegExp(document.getElementById("regex").value, document.getElementById("flags").value);  
+  
+// 获得并显示生成的正则表达式的字符串形式  
+document.getElementById("destRegex").innerText = re.toString() + ' ';  
+  
+// 定义 返回值  
+var cr;  
+  
+ex = "new RegExp('" + document.getElementById("regex").value + "', '" + document.getElementById("flags").value + "').";  
+  
+// 根据用户选择的方法, 进行相应的调用  
+switch ( method )  
+{  
+case '0': // 正则表达式的 exec 方法  
+cr = re.exec(document.getElementById("string").value);  
+exex = ex + "exec('" + document.getElementById("string").value + "')";  
+break;  
+  
+case '1': // 正则表达式的 test 方法  
+cr = re.test(document.getElementById("string").value);  
+exex = ex + "test('" + document.getElementById("string").value + "')";  
+break;  
+  
+case '2': // 字符串类的 match 方法  
+cr = document.getElementById("string").value.match(re);  
+ex = "'" + document.getElementById("string").value + "'.match(" + re.toString() + ")";  
+break;  
+  
+case '3': // 字符串类的 search 方法  
+cr = document.getElementById("string").value.search(re);  
+ex = "'" + document.getElementById("string").value + "'.search(" + re.toString() + ")";  
+break;  
+  
+case '4': // 字符串类的 replace 方法  
+cr = document.getElementById("string").value.replace(re, '<thinkbase.net>');  
+ex = "'" + document.getElementById("string").value + "'.replace(" + re.toString() + ", '<thinkbase.net>')";  
+break;  
+  
+case '5': // 字符串类的 split 方法  
+cr = document.getElementById("string").value.split(re);  
+ex = "'" + document.getElementById("string").value + "'.split(" + re.toString() + ")";  
+break;  
+}  
+  
+// 获得并显示表达式  
+document.getElementById("expression").innerText = ex;  
+  
+// 获得并显示计算结果的类型  
+document.getElementById("returnType").innerText = typeof(cr);  
+  
+// 定义结果  
+var result = '';  
+  
+if ( cr != null && typeof(cr) == 'object' && cr.length != null ) // 如果计算结果是一个数组, 则取出所有数组的值  
+{  
+for ( i = 0; i < cr.length; i++ )  
+{  
+result += "array[" + i + "] = '" + cr[i] + "'\n";  
+}  
+}  
+else  
+if ( cr != null ) // 如果计算结果不为null, 则取出计算结果的值  
+{  
+result = cr;  
+}  
+  
+// 获得并显示结果  
+document.getElementById("matchResult").innerText = result + ' ';  
+  
+// 获得并显示正则表达式的lastIndex属性  
+document.getElementById("lastIndex").innerText = re.lastIndex + ' ';  
+}  
+</SCRIPT>  
+<style>  
+input {  
+    background:ffffff;  
+    height:21;  
+    padding-left:3px;  
+    font-size:9pt;  
+    font-family:Courier New;  
+    border:1px solid #000000  
+}  
+textarea {  
+    background:ffffff;  
+    padding-left:3px;  
+    font-size:9pt;  
+    font-family:Courier New;  
+    border:1px solid #000000  
+}  
+body {  
+font-family: Verdana;  
+font-size: 9pt;  
+line-height: 170%  
+}  
+</style>  
+</HEAD>  
+  
+<BODY ALIGN=CENTER>  
+<FORM METHOD="post" ACTION="" ALIGN=CENTER>  
+<TABLE width="100%" border="1" cellpadding="1" cellspacing="0"  
+       bordercolorlight = "#C0C0C0" bordercolordark = "#FFFFFF"  
+       style="font-family: Verdana; font-size: 9pt"  
+>  
+<TR>  
+   <TD COLSPAN="2" ALIGN="CENTER" style="font-size: 12pt; font-weight: bold">Test javascript regex</TD>  
+</TR>  
+<TR>  
+   <TD width="30%">test regex:</TD>  
+   <TD><INPUT NAME="regex" TYPE="text" size="50" ID="regex"></TD>  
+</TR>  
+<TR>  
+   <TD>test regex flags:</TD>  
+   <TD><INPUT NAME="flags" TYPE="text" size="50" ID="flags" ID="flags">('g', 'i', or 'm')</TD>  
+</TR>  
+<TR>  
+   <TD>test string:</TD>  
+   <TD><textarea name="string" rows=5 id="string" style="width:90%"></textarea></TD>  
+  
+</TR>  
+<TR>  
+   <TD>select method:</TD>  
+   <TD>  
+    <SELECT NAME="select" onChange="check(this.value)" ID="select"  
+       style="font-family: Verdana;">  
+     <OPTION VALUE="0">exec</OPTION>  
+     <OPTION VALUE="1">test</OPTION>  
+     <OPTION VALUE="2">match</OPTION>  
+     <OPTION VALUE="3">search</OPTION>  
+     <OPTION VALUE="4">replace</OPTION>  
+     <OPTION VALUE="5">split</OPTION>  
+    </SELECT>  
+   <INPUT VALUE='run' onclick="check(document.getElementById('select').value)" TYPE=button  
+         style="background: #D6E7EF;  
+             border-bottom: 1px solid #104A7B;border-right: 1px solid #104A7B  
+                      border-left: 1px solid #AFC4D5;border-top:1px solid #AFC4D5;  
+       color:#000066; font-family:Verdana;  
+       19px;text-decoration:none;cursor: hand;  
+       width: 60px">  
+   </TD>  
+</TR>  
+<TR>  
+   <TD>dest regex:</TD>  
+   <TD STYLE="color:blue" ID=destRegex> </TD>  
+</TR>  
+<TR>  
+   <TD>dest expression:</TD>  
+   <TD STYLE="color:blue" ID=expression> </TD>  
+<TR>  
+<TR>  
+   <TD>return type:</TD>  
+   <TD STYLE="color:darkred" ID=returnType> </TD>  
+</TR>  
+<TR>  
+   <TD>result:</TD>  
+   <TD STYLE="color:red" ID=matchResult> </TD>  
+</TR>  
+<TR>  
+   <TD>regex lastIndex:</TD>  
+   <TD STYLE="color:red" ID=lastIndex> </TD>  
+</TR>  
+</TABLE>  
+</FORM>  
+</BODY>  
+</HTML>  
