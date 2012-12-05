@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;charset=gbk"/>
+<title>身份证校验码计算</title>
+</head>
+<body>
+<div>
+<ul>
+<li>身份证规则：六位数字地址码+八位数字出生日期码+三位数字顺序码+一位数字校验码
+<li>顺序码规则：对同年、月、日出生的人员编定的顺序号，其中第十七位奇数分给男性，偶数分给女性
+<li>校验码规则：就是以下的计算规则
+<li>例子：输入35018119491001010，计算的身份证即为：350181194910010104
+</ul>
+</div>
+<div>
+<label>身份证除最后一位：</label><input type="text" value="" id="v" maxlength="17"/>
+<input type="button" value="calc" onclick="calc()"/>
+</div>
+<div id="r"></div>
+<script>
+var code = [1,0,'X',9,8,7,6,5,4,3,2];
+var weight = [7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2];
+function calc(){
+  var strvalue = document.getElementById('v').value;
+  var numvalue = [];
+  for (var i=0; i<strvalue.length; numvalue[i]=parseInt(strvalue[i]),++i);
+  
+  var count = 0;
+  for (var i=0; i<numvalue.length; count+=numvalue[i]*weight[i],++i);
+  
+  count = count%11;
+  document.getElementById('r').innerHTML = "身份证为："+strvalue+code[count];
+}
+</script>
+</body>
+</html>
